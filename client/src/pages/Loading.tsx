@@ -1,5 +1,5 @@
 import { Loader2Icon } from "lucide-react"
-import { use, useEffect } from "react"
+import { useEffect } from "react"
 
 
 const Loading = () => {
