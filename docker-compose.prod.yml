@@ -20,7 +20,7 @@ services:
       context: ./client
       target: production
       args:
-        VITE_BACKEND_URL: https://api.ugcads.site
+        VITE_BASEURL: https://api.ugcads.site
     container_name: ugc_frontend
     restart: unless-stopped
     depends_on:

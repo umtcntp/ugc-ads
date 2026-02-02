@@ -12,8 +12,8 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
-ARG VITE_BACKEND_URL
-RUN VITE_BACKEND_URL=${VITE_BACKEND_URL} npm run build
+ARG VITE_BASEURL
+RUN VITE_BASEURL=${VITE_BASEURL} npm run build
 
 # Production Stage (Caddy serves /dist)
 FROM caddy:2-alpine AS production
