@@ -1,0 +1,25 @@
+# env
+.env
+**/.env
+!.env.example
+!**/.env.example
+
+
+# node
+node_modules
+**/node_modules
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# build
+dist
+build
+**/dist
+**/build
+
+server/generated
+**/generated
+
+# misc
+.DS_Store

@@ -1,0 +1,41 @@
+name: ugcads-dev
+
+services:
+  ugc_api:
+    build:
+      context: ./server
+      target: development
+    container_name: ugc_api
+    env_file:
+      - ./server/.env
+    environment:
+      NODE_ENV: development
+      PORT: 5050
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    ports:
+      - "5050:5050"
+    networks:
+      - proxy
+
+  ugc_frontend:
+    build:
+      context: ./client
+      target: development
+    container_name: ugc_frontend
+    environment:
+      VITE_BACKEND_URL: http://localhost:5050
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    depends_on:
+      - ugc_api
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true

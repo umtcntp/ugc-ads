@@ -1,0 +1,8 @@
+:80 {
+  root * /srv
+  encode gzip zstd
+  file_server
+
+  # SPA (React Router) için:
+  try_files {path} /index.html
+}

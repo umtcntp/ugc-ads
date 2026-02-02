@@ -1,0 +1,33 @@
+name: ugcads
+
+services:
+  ugc_api:
+    build:
+      context: ./server
+      target: production
+    container_name: ugc_api
+    restart: unless-stopped
+    env_file:
+      - ./server/.env
+    environment:
+      NODE_ENV: production
+      PORT: 5050
+    networks:
+      - proxy
+
+  ugc_frontend:
+    build:
+      context: ./client
+      target: production
+      args:
+        VITE_BACKEND_URL: https://api.ugcads.site
+    container_name: ugc_frontend
+    restart: unless-stopped
+    depends_on:
+      - ugc_api
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true
