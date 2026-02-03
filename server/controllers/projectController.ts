@@ -123,7 +123,13 @@ export const createProject = async (req: Request, res: Response) => {
 
         //Check if the response is valid
         if (!aiResponse?.candidates?.[0]?.content?.parts) {
-            throw new Error("AI generation failed. No content returned.");
+            
+	    console.log("AI RESPONSE keys:", {
+  		hasCandidates: !!aiResponse?.candidates?.length,
+  		finishReason: aiResponse?.candidates?.[0]?.finishReason,
+  		promptFeedback: aiResponse?.promptFeedback,
+	    });
+	throw new Error("AI generation failed. No content returned.");
         }
 
         const parts = aiResponse.candidates[0].content.parts;
@@ -226,14 +232,15 @@ export const createVideo = async (req: Request, res: Response) => {
             throw new Error('Generated image not found');
         }
 
-        const image = await axios.get(project.generatedImage, { responseType: 'arraybuffer' });
-        const imageBytes: any = Buffer.from(image.data);
+        const imageRes = await axios.get(project.generatedImage, { responseType: 'arraybuffer' });
+	const mimeType = (imageRes.headers?.["content-type"] as string) || "image/jpeg";
+        const imageBytes: any = Buffer.from(imageRes.data);
         let operation: any = await ai.models.generateVideos({
             model,
             prompt,
             image: {
                 imageBytes: imageBytes.toString('base64'),
-                mimeType: 'image/png'
+                mimeType,
             },
             config: {
                 aspectRatio: project?.aspectRatio || '9:16',
@@ -255,9 +262,10 @@ export const createVideo = async (req: Request, res: Response) => {
 
         //Create the images directory if it doesn't exist
         fs.mkdirSync('videos', { recursive: true });
-        if (!operation.response.generatedVideos) {
-            throw new Error(operation.response.raiMediaFilterReasons[0]);
-        };
+        if (!operation?.response?.generatedVideos?.length) {
+    		console.log("VEO RESPONSE (no videos):", JSON.stringify(operation?.response, null, 2));
+    		throw new Error(operation?.response?.raiMediaFilterReasons?.[0] || "Video generation returned no video.");
+	};
 
         //download the video
         await ai.files.download({
